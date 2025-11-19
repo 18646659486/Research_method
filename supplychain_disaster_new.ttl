@@ -39,12 +39,12 @@ scm:Function a owl:Class ;
 scm:isPrimaryKey a owl:AnnotationProperty ;
   rdfs:label "是否主键"@zh .
 
-scm:bindAction a owl:ObjectProperty ;
+scm:bind-Action a owl:ObjectProperty ;
   rdfs:label "本体对象拥有行动"@zh ;
   rdfs:domain scm:Object ;
   rdfs:range scm:Action .
 
-scm:bindFunction a owl:ObjectProperty ;
+scm:bind-Function a owl:ObjectProperty ;
   rdfs:label "本体对象拥有函数"@zh ;
   rdfs:domain scm:Object ;
   rdfs:range scm:Function .
@@ -163,7 +163,7 @@ scm:rainfall a owl:DatatypeProperty ; rdfs:domain scm:Disaster-Event ; rdfs:rang
 scm:warehouseID a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range xsd:string ; rdfs:label "仓库ID"@zh .
 scm:warehouseID scm:isPrimaryKey true .
 scm:location a owl:DatatypeProperty ; rdfs:domain [ owl:unionOf ( scm:Warehouse scm:Road scm:Order ) ] ; rdfs:range xsd:string ; rdfs:label "位置"@zh .
-scm:warehouseType a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:WarehouseType ; rdfs:label "仓库类型"@zh .
+scm:warehouse-Type a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:WarehouseType ; rdfs:label "仓库类型"@zh .
 scm:maxCapacity a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range xsd:decimal ; rdfs:label "最大容量"@zh .
 scm:currentInventoryValue a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range xsd:decimal ; rdfs:label "当前库存价值"@zh .
 scm:highValueSKURatio a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Probability0to1 ; rdfs:label "高价值SKU占比"@zh .
@@ -173,7 +173,7 @@ scm:staffCount a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range x
 scm:evacuationTime a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range xsd:decimal ; rdfs:label "撤离时间(小时)"@zh .
 scm:closureCost a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range xsd:decimal ; rdfs:label "关闭成本"@zh .
 scm:transferCapability a owl:DatatypeProperty ; rdfs:domain scm:Warehouse ; rdfs:range xsd:decimal ; rdfs:label "转运能力(单位/小时)"@zh .
-scm:backupWarehouses a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Warehouse ; rdfs:label "备援仓库"@zh .
+scm:backup-Warehouses a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Warehouse ; rdfs:label "备援仓库"@zh .
 
 # Road 属性
 scm:roadID a owl:DatatypeProperty ; rdfs:domain scm:Road  ; rdfs:range xsd:string ; rdfs:label "道路ID"@zh .
@@ -181,15 +181,15 @@ scm:roadID scm:isPrimaryKey true .
 scm:startPoint a owl:DatatypeProperty ; rdfs:domain scm:Road ; rdfs:range xsd:string ; rdfs:label "起点"@zh .
 scm:endPoint a owl:DatatypeProperty ; rdfs:domain scm:Road ; rdfs:range xsd:string ; rdfs:label "终点"@zh .
 scm:normalCapacity a owl:DatatypeProperty ; rdfs:domain scm:Road ; rdfs:range xsd:decimal ; rdfs:label "常规通行能力"@zh .
-scm:accessStatus a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:AccessStatus ; rdfs:label "通行状态"@zh .
+scm:access-Status a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:AccessStatus ; rdfs:label "通行状态"@zh .
 scm:blockageDuration a owl:DatatypeProperty ; rdfs:domain scm:Road ; rdfs:range xsd:decimal ; rdfs:label "封闭时长(小时)"@zh .
-scm:connectedWarehouses a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Warehouse ; rdfs:label "连接仓库"@zh .
+scm:connected-Warehouses a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Warehouse ; rdfs:label "连接仓库"@zh .
 scm:alternativeRoutes a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Road ; rdfs:label "替代路线"@zh .
 
 # Logistics 属性
 scm:providerID a owl:DatatypeProperty ; rdfs:domain scm:Logistics ; rdfs:range xsd:string ; rdfs:label "供应商ID"@zh .
 scm:providerID scm:isPrimaryKey true .
-scm:serviceType a owl:ObjectProperty ; rdfs:domain scm:Logistics ; rdfs:range scm:ServiceType ; rdfs:label "服务类型"@zh .
+scm:service-Type a owl:ObjectProperty ; rdfs:domain scm:Logistics ; rdfs:range scm:ServiceType ; rdfs:label "服务类型"@zh .
 scm:coverageArea a owl:DatatypeProperty ; rdfs:domain scm:Logistics ; rdfs:range xsd:string ; rdfs:label "覆盖区域"@zh .
 scm:normalCapacity a owl:DatatypeProperty ; rdfs:domain scm:Logistics ; rdfs:range xsd:decimal ; rdfs:label "常规能力"@zh .
 scm:surgeMultiplier a owl:DatatypeProperty ; rdfs:domain scm:Logistics ; rdfs:range scm:SurgeMultiplier1to2 ; rdfs:label "加急系数"@zh .
@@ -203,10 +203,10 @@ scm:orderID scm:isPrimaryKey true .
 scm:customerID a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range xsd:string ; rdfs:label "客户ID"@zh .
 scm:orderValue a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range xsd:decimal ; rdfs:label "订单价值"@zh .
 scm:SKUList a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range xsd:string ; rdfs:label "SKU列表"@zh .
-scm:assignedRoute a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:Road ; rdfs:label "分配路线"@zh .
+scm:assigned-Route a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:Road ; rdfs:label "分配路线"@zh .
 scm:promisedDeliveryTime a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range xsd:dateTime ; rdfs:label "承诺交付时间"@zh .
 scm:fulfillmentRate a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range scm:Probability0to1 ; rdfs:label "履约率"@zh .
-scm:priority a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:OrderPriority ; rdfs:label "优先级"@zh .
+scm:order-Priority a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:OrderPriority ; rdfs:label "优先级"@zh .
 scm:estimatedDelay a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range xsd:decimal ; rdfs:label "预计延迟(小时)"@zh .
 scm:bufferTime a owl:DatatypeProperty ; rdfs:domain scm:Order ; rdfs:range xsd:decimal ; rdfs:label "缓冲时间(小时)"@zh .
 
@@ -232,28 +232,28 @@ scm:compensationExpectation a owl:DatatypeProperty ; rdfs:domain scm:Customer ; 
 ##################################
 
 # 依赖关系
-scm:dependsOnRoad a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:Road ; rdfs:label "依赖道路"@zh .
-scm:dependsOnCustomer a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:Customer ; rdfs:label "关联客户"@zh .
+scm:depends-On-Road a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:Road ; rdfs:label "依赖道路"@zh .
+scm:depends-On-Customer a owl:ObjectProperty ; rdfs:domain scm:Order ; rdfs:range scm:Customer ; rdfs:label "关联客户"@zh .
 
 # 显式对象间关系与逆属性
 
 # DisasterEvent ↔ Warehouse
-scm:affects-Warehouse a owl:ObjectProperty ; rdfs:domain scm:Disaster-Event ; rdfs:range scm:Warehouse ; rdfs:label "影响仓库"@zh ; owl:inverseOf scm:affectedByEventOnWarehouse .
-scm:affectedByEventOnWarehouse a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Disaster-Event ; rdfs:label "受灾害事件影响(仓库)"@zh .
+scm:affects-Warehouse a owl:ObjectProperty ; rdfs:domain scm:Disaster-Event ; rdfs:range scm:Warehouse ; rdfs:label "影响仓库"@zh ; owl:inverseOf scm:affected-By-Event-On-Warehouse .
+scm:affected-By-Event-On-Warehouse a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Disaster-Event ; rdfs:label "受灾害事件影响(仓库)"@zh .
 
 # DisasterEvent ↔ Road
-scm:affects-Road a owl:ObjectProperty ; rdfs:domain scm:Disaster-Event ; rdfs:range scm:Road ; rdfs:label "影响道路"@zh ; owl:inverseOf scm:affectedByEventOnRoad .
-scm:affectedByEventOnRoad a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Disaster-Event ; rdfs:label "受灾害事件影响(道路)"@zh .
+scm:affects-Road a owl:ObjectProperty ; rdfs:domain scm:Disaster-Event ; rdfs:range scm:Road ; rdfs:label "影响道路"@zh ; owl:inverseOf scm:affected-By-Event-On-Road .
+scm:affected-By-Event-On-Road a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Disaster-Event ; rdfs:label "受灾害事件影响(道路)"@zh .
 
 # Warehouse ↔ Road（connectedWarehouses 的逆属性）
-scm:connectedRoads a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Road ; rdfs:label "连接道路"@zh ; owl:inverseOf scm:connectedWarehouses .
+scm:connected-Roads a owl:ObjectProperty ; rdfs:domain scm:Warehouse ; rdfs:range scm:Road ; rdfs:label "连接道路"@zh ; owl:inverseOf scm:connected-Warehouses .
 
 # Customer ↔ Order（dependsOnCustomer 的逆属性）
-scm:placedOrders a owl:ObjectProperty ; rdfs:domain scm:Customer ; rdfs:range scm:Order ; rdfs:label "下单订单"@zh ; owl:inverseOf scm:dependsOnCustomer .
+scm:placed-Orders a owl:ObjectProperty ; rdfs:domain scm:Customer ; rdfs:range scm:Order ; rdfs:label "下单订单"@zh ; owl:inverseOf scm:depends-On-Customer .
 
 # Road ↔ Order（dependsOnRoad / assignedRoute 的逆属性）
-scm:dependentOrders a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Order ; rdfs:label "依赖该道路的订单"@zh ; owl:inverseOf scm:dependsOnRoad .
-scm:assignedOrders a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Order ; rdfs:label "分配到此路线的订单"@zh ; owl:inverseOf scm:assignedRoute .
+scm:dependent-Orders a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Order ; rdfs:label "依赖该道路的订单"@zh ; owl:inverseOf scm:depends-On-Road .
+scm:assigned-Orders a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:Order ; rdfs:label "分配到此路线的订单"@zh ; owl:inverseOf scm:assigned-Route .
 
 ##################################
 # 函数定义（对象方法）
@@ -262,36 +262,36 @@ scm:assignedOrders a owl:ObjectProperty ; rdfs:domain scm:Road ; rdfs:range scm:
 # DisasterEvent 函数
 scm:AssessRiskLevel a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "评估威胁等级"@zh .
 scm:CalculateImpactZone a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "计算影响区域"@zh .
-scm:Disaster-Event scm:bindFunction scm:AssessRiskLevel, scm:CalculateImpactZone .
+scm:Disaster-Event scm:bind-Function scm:AssessRiskLevel, scm:CalculateImpactZone .
 
 # Warehouse 函数
 scm:EvaluateClosureImpact a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "评估关闭影响"@zh .
 scm:CalculateAssetRisk a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "评估资产风险"@zh .
-scm:Warehouse scm:bindFunction scm:EvaluateClosureImpact, scm:CalculateAssetRisk .
+scm:Warehouse scm:bind-Function scm:EvaluateClosureImpact, scm:CalculateAssetRisk .
 
 # Road 函数
 scm:IdentifyAffectedOrders a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "识别受影响订单"@zh .
-scm:Road scm:bindFunction scm:IdentifyAffectedOrders .
+scm:Road scm:bind-Function scm:IdentifyAffectedOrders .
 
 # Logistics 函数
 scm:CalculateSurgeCost a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "计算加急成本"@zh .
 scm:CheckCoverage a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "检查覆盖范围"@zh .
-scm:Logistics scm:bindFunction scm:CalculateSurgeCost, scm:CheckCoverage .
+scm:Logistics scm:bind-Function scm:CalculateSurgeCost, scm:CheckCoverage .
 
 # Order 函数
 scm:CalculateDelay a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "计算订单延迟"@zh .
 scm:GetCustomerTier a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "获取客户层级"@zh .
-scm:Order scm:bindFunction scm:CalculateDelay, scm:GetCustomerTier .
+scm:Order scm:bind-Function scm:CalculateDelay, scm:GetCustomerTier .
 
 # Revenue 函数
 scm:CalculateOpportunityLoss a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "计算机会损失"@zh .
 scm:AssessCustomerChurnValue a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "评估客户流失价值"@zh .
-scm:Revenue scm:bindFunction scm:CalculateOpportunityLoss, scm:AssessCustomerChurnValue .
+scm:Revenue scm:bind-Function scm:CalculateOpportunityLoss, scm:AssessCustomerChurnValue .
 
 # Customer 函数
 scm:PredictComplaintProbability a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "预测投诉概率"@zh .
 scm:AssessSatisfactionImpact a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "评估补偿影响"@zh .
-scm:Customer scm:bindFunction scm:PredictComplaintProbability, scm:AssessSatisfactionImpact .
+scm:Customer scm:bind-Function scm:PredictComplaintProbability, scm:AssessSatisfactionImpact .
 
 ##################################
 # Function parameters and outputs (semantics)
@@ -418,12 +418,12 @@ scm:WarehouseClosureDecision a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:l
 scm:MultiOptionComparison a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "多方案比较"@zh .
 scm:CascadeImpactPrediction a owl:Class ; rdfs:subClassOf scm:Function ; rdfs:label "级联影响预测"@zh .
 
-scm:producesOutcome a owl:ObjectProperty ; rdfs:subPropertyOf scm:generated ; rdfs:domain [ owl:unionOf ( scm:WarehouseClosureDecision scm:MultiOptionComparison scm:CascadeImpactPrediction ) ] ; rdfs:range scm:DecisionOutcome ; rdfs:label "输出结果"@zh .
-scm:consumesWarehouse a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:WarehouseClosureDecision ; rdfs:range scm:Warehouse ; rdfs:label "输入仓库"@zh .
-scm:consumesOrders a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain [ owl:unionOf ( scm:MultiOptionComparison scm:CascadeImpactPrediction ) ] ; rdfs:range scm:Order ; rdfs:label "输入订单"@zh .
-scm:consumesLogistics a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:MultiOptionComparison ; rdfs:range scm:Logistics ; rdfs:label "输入物流"@zh .
-scm:consumesRevenue a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:MultiOptionComparison ; rdfs:range scm:Revenue ; rdfs:label "输入营收"@zh .
-scm:consumesRoad a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:CascadeImpactPrediction ; rdfs:range scm:Road ; rdfs:label "输入道路"@zh .
+scm:produces-Outcome a owl:ObjectProperty ; rdfs:subPropertyOf scm:generated ; rdfs:domain [ owl:unionOf ( scm:WarehouseClosureDecision scm:MultiOptionComparison scm:CascadeImpactPrediction ) ] ; rdfs:range scm:DecisionOutcome ; rdfs:label "输出结果"@zh .
+scm:consumes-Warehouse a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:WarehouseClosureDecision ; rdfs:range scm:Warehouse ; rdfs:label "输入仓库"@zh .
+scm:consumes-Orders a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain [ owl:unionOf ( scm:MultiOptionComparison scm:CascadeImpactPrediction ) ] ; rdfs:range scm:Order ; rdfs:label "输入订单"@zh .
+scm:consumes-Logistics a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:MultiOptionComparison ; rdfs:range scm:Logistics ; rdfs:label "输入物流"@zh .
+scm:consumes-Revenue a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:MultiOptionComparison ; rdfs:range scm:Revenue ; rdfs:label "输入营收"@zh .
+scm:consumes-Road a owl:ObjectProperty ; rdfs:subPropertyOf scm:used ; rdfs:domain scm:CascadeImpactPrediction ; rdfs:range scm:Road ; rdfs:label "输入道路"@zh .
 
 ##################################
 # 分类体系（客户与供应商）
