@@ -6,7 +6,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix ex: <http://asiainfo.com/example-owl#> .
 
-##################################
+##################################f
 # 基础抽象类与通用语义（禁止变动）
 ##################################
 ex:Entity a owl:Class ; rdfs:subClassOf prov:Entity ; rdfs:label "实体"@zh .
@@ -82,7 +82,7 @@ ex:work_order ex:bindAction ex:assign_order_to_employee .
 ex:create_hotlines_order a ex:Action ;
   rdfs:label "创建万号服务工单"@zh ;
   rdfs:comment """@action_label: 创建万号服务工单
-    处理客户投诉、咨询等热线服务需求"""@zh ;
+    deal客户投诉、咨询等热线服务需求"""@zh ;
   ex:hasParameter [ a ex:Parameter ; ex:paramName "cust_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
                     [ a ex:Parameter ; ex:paramName "service_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
                     [ a ex:Parameter ; ex:paramName "prod_inst_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
@@ -95,7 +95,7 @@ ex:HotlineService ex:bindAction ex:create_hotlines_order .
 ex:create_installation_order a ex:Action ;
   rdfs:label "创建装维服务工单"@zh ;
   rdfs:comment """@action_label: 创建装维服务工单
-    处理宽带安装、设备维护等装维服务"""@zh ;
+    deal宽带安装、设备维护等装维服务"""@zh ;
   ex:hasParameter [ a ex:Parameter ; ex:paramName "service_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
                     [ a ex:Parameter ; ex:paramName "cust_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
                     [ a ex:Parameter ; ex:paramName "prod_inst_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
@@ -107,7 +107,7 @@ ex:InstallationMaintenanceService ex:bindAction ex:create_installation_order .
 ex:create_network_optimize_order a ex:Action ;
   rdfs:label "创建网优服务工单"@zh ;
   rdfs:comment """@action_label: 创建网优服务工单
-    根据网络优化需求创建工单，主要处理信号覆盖、网络质量等问题"""@zh ;
+    根据网络优化需求创建工单，主要deal信号覆盖、网络质量等问题"""@zh ;
   ex:hasParameter [ a ex:Parameter ; ex:paramName "service_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
                     [ a ex:Parameter ; ex:paramName "cust_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
                     [ a ex:Parameter ; ex:paramName "prod_inst_id" ; ex:paramType "xsd:string" ; ex:isOptional false ] ,
@@ -863,20 +863,20 @@ ex:administers a owl:ObjectProperty ;
   ex:rangeAttribute ex:所属渠道ID ;
   rdfs:comment ""@zh .
 
-ex:分配给 a owl:ObjectProperty ;
+ex:dispatch a owl:ObjectProperty ;
   rdfs:subPropertyOf ex:custom_relation ;
   rdfs:domain ex:work_order ;
   rdfs:range ex:employee ;
-  rdfs:label "分配给"@zh ;
+  rdfs:label "dispatch"@zh ;
   ex:domainAttribute ex:负责员工ID ;
   ex:rangeAttribute ex:员工唯一标识 ;
   rdfs:comment ""@zh .
 
-ex:处理 a owl:ObjectProperty ;
+ex:deal a owl:ObjectProperty ;
   rdfs:subPropertyOf ex:custom_relation ;
   rdfs:domain ex:employee ;
   rdfs:range ex:work_order ;
-  rdfs:label "处理"@zh ;
+  rdfs:label "deal"@zh ;
   ex:domainAttribute ex:员工唯一标识 ;
   ex:rangeAttribute ex:负责员工ID ;
   rdfs:comment ""@zh .
