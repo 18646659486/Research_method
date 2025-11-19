@@ -208,10 +208,10 @@ ex:Product a owl:Class ;
   ex:hasTitle ex:产品实例标识 ;
   rdfs:comment "产品信息"@zh .
 
-ex:Repair_Strategy a owl:Class ;
+ex:Repair-Strategy a owl:Class ;
   rdfs:subClassOf ex:Object ;
   rdfs:label "修复策略"@zh ;
-  rdfs:label "Repair_Strategy"@en ;
+  rdfs:label "Repair-Strategy"@en ;
   ex:hasPrimaryKey ex:策略唯一标识 ;
   ex:hasTitle ex:主要问题 ;
   rdfs:comment "针对不同业务指标所提出的修复策略"@zh .
@@ -445,7 +445,7 @@ ex:本月故障申告次数 a owl:DatatypeProperty ;
   rdfs:label "本月故障申告次数"@zh .
 
 ex:特征 a owl:DatatypeProperty ;
-  rdfs:domain ex:Repair_Strategy ;
+  rdfs:domain ex:Repair-Strategy ;
   rdfs:range xsd:string ;
   rdfs:comment ""@zh ;
   rdfs:label "特征"@zh .
@@ -463,7 +463,7 @@ ex:ID a owl:DatatypeProperty ;
   rdfs:label "ID"@zh .
 
 ex:策略唯一标识 a owl:DatatypeProperty ;
-  rdfs:domain ex:Repair_Strategy ;
+  rdfs:domain ex:Repair-Strategy ;
   rdfs:range xsd:int ;
   rdfs:comment ""@zh ;
   rdfs:label "策略唯一标识"@zh .
@@ -493,7 +493,7 @@ ex:本月访问主流网站的网页响应成功率百分比 a owl:DatatypePrope
   rdfs:label "本月访问主流网站的网页响应成功率百分比"@zh .
 
 ex:主要问题 a owl:DatatypeProperty ;
-  rdfs:domain ex:Repair_Strategy ;
+  rdfs:domain ex:Repair-Strategy ;
   rdfs:range xsd:string ;
   rdfs:comment ""@zh ;
   rdfs:label "主要问题"@zh .
@@ -667,7 +667,7 @@ ex:客户星级 a owl:DatatypeProperty ;
   rdfs:label "客户星级"@zh .
 
 ex:解决方案 a owl:DatatypeProperty ;
-  rdfs:domain ex:Repair_Strategy ;
+  rdfs:domain ex:Repair-Strategy ;
   rdfs:range xsd:string ;
   rdfs:comment "test"@zh ;
   rdfs:label "解决方案"@zh .
@@ -757,7 +757,7 @@ ex:generates a owl:ObjectProperty ;
 
 ex:isPartOf a owl:ObjectProperty ;
   rdfs:subPropertyOf ex:custom_relation ;
-  rdfs:domain ex:Repair_Strategy ;
+  rdfs:domain ex:Repair-Strategy ;
   rdfs:range ex:Product ;
   rdfs:label "属于"@zh ;
   ex:domainAttribute ex:特征 ;
@@ -767,7 +767,7 @@ ex:isPartOf a owl:ObjectProperty ;
 ex:requires a owl:ObjectProperty ;
   rdfs:subPropertyOf ex:custom_relation ;
   rdfs:domain ex:Product ;
-  rdfs:range ex:Repair_Strategy ;
+  rdfs:range ex:Repair-Strategy ;
   rdfs:label "需要"@zh ;
   ex:domainAttribute ex:产品实例标识 ;
   ex:rangeAttribute ex:特征 ;
@@ -901,7 +901,7 @@ ex:has a owl:ObjectProperty ;
 
 ex:isReferencedBy a owl:ObjectProperty ;
   rdfs:subPropertyOf ex:custom_relation ;
-  rdfs:domain ex:Repair_Strategy ;
+  rdfs:domain ex:Repair-Strategy ;
   rdfs:range ex:Plan ;
   rdfs:label "被引用"@zh ;
   ex:domainAttribute ex:主要问题 ;
@@ -911,7 +911,7 @@ ex:isReferencedBy a owl:ObjectProperty ;
 ex:Reference a owl:ObjectProperty ;
   rdfs:subPropertyOf ex:custom_relation ;
   rdfs:domain ex:Plan ;
-  rdfs:range ex:Repair_Strategy ;
+  rdfs:range ex:Repair-Strategy ;
   rdfs:label "引用"@zh ;
   ex:domainAttribute ex:ID ;
   ex:rangeAttribute ex:主要问题 ;
