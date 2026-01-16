@@ -8,7 +8,7 @@ User,,,,name,姓名,String,姓名,,是
 User,,,,age,年龄,Integer,年龄,,
 User,,,,addr,地址,String,地址,,
 User,,,,depart_id,部门,String,所属部门ID,,
-Project,项目,,启用,id,项目ID,String,项目ID,是,
+Project,,,启用,id,项目ID,String,项目ID,是,
 Project,,,,name,项目名称,String,项目名称,,是
 Project,,,,work_num,参与人数,Integer,参与人数,,
 Project,,,,start_date,启用时间,Date,项目启动时间,,
