@@ -1,0 +1,8 @@
+﻿"注：
+1. 本体资源创建时，带*红色字段为必填字段；
+2. 每列名称请勿修改，修改后会导致导入出错。实际使用时，样例数据需删除。",Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9,Unnamed: 10
+对象间关系信息,,,,,,,,,,
+关系类型,对象,对象属性,被关联对象,被关联对象属性,中间数据集,中间数据集字段-对象,中间数据集字段-被关联对象,关系标签1,关系标签2,基数设置
+外键关联,User,id,Department,id,,,,属于,包含,多对一
+中间数据集关联,User,name,Project,name,BU数据源/BU_ontology/PROJECT_APP_INFO,employee_id,project_id,参与,包含,
+语义关联,Department,,Project,,,,,竞标,被竞标,
