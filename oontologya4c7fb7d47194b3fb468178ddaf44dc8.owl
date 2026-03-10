@@ -1,0 +1,1165 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ex: <http://asiainfo.com/example-owl#> .
+
+##################################
+# 基础抽象类与通用语义（禁止变动）
+##################################
+ex:Entity a owl:Class ; rdfs:subClassOf prov:Entity ; rdfs:label "实体"@zh .
+ex:Object a owl:Class ; rdfs:subClassOf ex:Entity ; rdfs:label "本体对象"@zh .
+ex:Action a owl:Class ; rdfs:subClassOf prov:Activity ; rdfs:label "行动"@zh .
+ex:Logic a owl:Class ; rdfs:subClassOf prov:Activity ; rdfs:label "决策/逻辑函数"@zh .
+ex:hasPrimaryKey a owl:AnnotationProperty ; rdfs:label "主键属性"@zh ; rdfs:comment "在类级别声明该对象的主键数据属性"@zh .
+ex:hasTitle a owl:AnnotationProperty ; rdfs:label "标题属性"@zh ; rdfs:comment "在类级别声明该对象的标题数据属性"@zh .
+ex:bindAction a owl:ObjectProperty ; rdfs:label "本体对象关联行动"@zh ; rdfs:domain ex:Object ; rdfs:range ex:Action .
+ex:bindLogic a owl:ObjectProperty ; rdfs:label "本体对象关联函数"@zh ; rdfs:domain ex:Object ; rdfs:range ex:Logic .
+ex:custom_relation a owl:ObjectProperty ; rdfs:label "自定义对象与对象之间的关系"@zh .
+ex:Parameter a owl:Class ; rdfs:label "函数参数"@zh .
+ex:hasParameter a owl:ObjectProperty ; rdfs:label "有参数"@zh ; rdfs:domain ex:Logic ; rdfs:range ex:Parameter .
+ex:paramName a owl:DatatypeProperty ; rdfs:label "参数名"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:string .
+ex:paramType a owl:DatatypeProperty ; rdfs:label "参数类型"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:string .
+ex:paramTypeNode a owl:ObjectProperty ; rdfs:label "参数类型节点"@zh ; rdfs:domain ex:Parameter .
+ex:ListType a owl:Class ; rdfs:label "列表类型"@zh .
+ex:DictType a owl:Class ; rdfs:label "字典类型"@zh .
+ex:itemType a owl:DatatypeProperty ; rdfs:label "元素类型"@zh .
+ex:keyType a owl:DatatypeProperty ; rdfs:label "键类型"@zh .
+ex:valueType a owl:DatatypeProperty ; rdfs:label "值类型"@zh .
+ex:isOptional a owl:DatatypeProperty ; rdfs:label "是否可选"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:boolean .
+ex:defaultValue a owl:DatatypeProperty ; rdfs:label "默认值"@zh ; rdfs:domain ex:Parameter ; rdfs:range xsd:string .
+ex:ontologyName a owl:Class ; rdfs:label "本体名称"@zh .
+ex:domainAttribute a owl:AnnotationProperty ; rdfs:label "域属性"@zh ; rdfs:comment "指定对象属性的域端使用哪个数据属性建立关联"@zh .
+ex:rangeAttribute a owl:AnnotationProperty ; rdfs:label "值域属性"@zh ; rdfs:comment "指定对象属性的值域端使用哪个数据属性建立关联"@zh .
+ex:relationLabel a owl:AnnotationProperty ; rdfs:label "关系标签"@zh ; rdfs:comment "表示关系的语义标签名称（如hasOrder、isPartOf等），用于标识关系类型"@zh .
+ex:hasMiddleObject a owl:ObjectProperty ; rdfs:label "中间对象"@zh ; rdfs:comment "用来描述多对多关系的情况下，两个对象所使用到的中间对象"@zh .
+##################################
+# 本体名称
+##################################
+ex:lyc_test a ex:ontologyName ;
+  rdfs:label "lyc测试"@zh .
+
+##################################
+# 可用函数
+##################################
+ex:analyze_coal_type_impact a ex:Logic ;
+  rdfs:label "分析煤种对故障影响"@zh ;
+  rdfs:comment """@function_label: 分析煤种对故障影响
+    分析煤种对故障影响
+
+@function_label analyze_coal_type_impact
+@function_description 根据设备编号和故障时间查询煤种信息，判断是否易粘连导致皮带跑偏
+@param equipmentCode: 设备编号
+@param faultTime: 故障时间（小时粒度）
+@return 返回煤种信息及是否易粘连的判断结果
+
+实现要求：
+- 查询《流程作业表》获取煤种编号
+- 根据煤种编号查询《煤种基础表》获取煤种详细信息
+- 判断煤种是否为湿煤（易粘连）
+
+    
+    Params:
+      Required:
+        - equipmentCode: str
+        - faultTime: object"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "equipmentCode" ; ex:paramType "xsd:string" ; ex:isOptional false ], [ a ex:Parameter ; ex:paramName "faultTime" ; ex:paramType "object" ; ex:isOptional false ] .
+
+ex:analyze_motor_current a ex:Logic ;
+  rdfs:label "分析电机电流平衡性"@zh ;
+  rdfs:comment """@function_label: 分析电机电流平衡性
+    分析电机电流平衡性
+
+@function_label analyze_motor_current
+@function_description 分析设备下所有电机的电流值，判断负载是否平衡
+@param equipmentName: 设备名称
+@param faultTime: 故障时间
+@return 返回电流分析结果，包括各电机电流值及是否平衡的判断
+
+实现要求：
+- 查询故障时间点前10分钟内数据
+- 同一时刻各电机间电流差值超过正负5则判定为不平衡
+- 电流过高可能因重载，过低可能因轻载或摩擦力下降
+
+    
+    Params:
+      Required:
+        - equipmentName: str
+        - faultTime: object"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "equipmentName" ; ex:paramType "xsd:string" ; ex:isOptional false ], [ a ex:Parameter ; ex:paramName "faultTime" ; ex:paramType "object" ; ex:isOptional false ] .
+
+ex:calculate_belt_load a ex:Logic ;
+  rdfs:label "计算皮带载重情况"@zh ;
+  rdfs:comment """@function_label: 计算皮带载重情况
+    计算皮带载重情况
+
+@function_label calculate_belt_load
+@function_description 根据皮带秤数据或流程作业表推算皮带载重情况
+@param beltName: 皮带名称
+@param faultTime: 故障时间
+@return 返回载重情况（轻载、重载或未知）
+
+实现要求：
+- 情景1：直接查询皮带秤数据表，载重4000以下为轻载，5500以上为重载
+- 情景2：通过流程作业表推算重量，需计算物料到达时间
+- 情景3：通过皮带运行到达关系表推算
+
+    
+    Params:
+      Required:
+        - beltName: str
+        - faultTime: object"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "beltName" ; ex:paramType "xsd:string" ; ex:isOptional false ], [ a ex:Parameter ; ex:paramName "faultTime" ; ex:paramType "object" ; ex:isOptional false ] .
+
+ex:determine_fault_location a ex:Logic ;
+  rdfs:label "确定故障位置"@zh ;
+  rdfs:comment """@function_label: 确定故障位置
+    确定故障位置
+
+@function_label determine_fault_location
+@function_description 根据FNAME字段内容判断跑偏或打滑故障位置信息
+@param faultName: 故障名称字段内容，如“跑偏1、2号”或“打滑1、2号”
+@param equipmentName: 设备名称
+@return 返回故障位置描述字符串，如“尾部跑偏开关1号和2号位置”
+
+实现要求：
+- 需参考《皮带参数表》中开关编号与位置的映射关系
+- 1、2号通常代表尾部位置，3、4号代表中间位置
+
+    
+    Params:
+      Required:
+        - faultName: str
+        - equipmentName: str"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "faultName" ; ex:paramType "xsd:string" ; ex:isOptional false ], [ a ex:Parameter ; ex:paramName "equipmentName" ; ex:paramType "xsd:string" ; ex:isOptional false ] .
+
+##################################
+# Action动作定义
+##################################
+ex:QueryBeltSpeedData a ex:Action ;
+  rdfs:label "查询皮带运行速度"@zh ;
+  rdfs:comment """查询皮带运行速度
+
+@action_label QueryBeltSpeedData
+@function_description 查询皮带机运行速度数据（暂时获取不到）
+
+Args:
+    equipmentName (xsd:string): 设备名称
+    faultTime (xsd:dateTime): 故障时间
+
+Returns:
+    dict: 皮带速度数据
+
+Side effects:
+    无
+"""@zh  .
+
+ex:BeltFaultAnalysis_Object ex:bindAction ex:QueryBeltSpeedData .
+
+ex:QueryFaultDetails a ex:Action ;
+  rdfs:label "查询告警详情"@zh ;
+  rdfs:comment """查询告警详情
+
+@action_label QueryFaultDetails
+@function_description 查询皮带机故障告警详情，定位故障位置
+
+Args:
+    faultId (xsd:integer): 故障ID
+    equipmentName (xsd:string): 设备名称
+    faultTime (xsd:dateTime): 故障时间
+
+Returns:
+    dict: 包含故障位置、设备名称、故障时间、故障内容描述、故障类型、处理状态、转接塔名称
+
+Side effects:
+    无
+"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "faultTime" ; ex:paramType """{'type': "{'type': 'datetime', 'is_required': True}", 'is_required': True}""" ; ex:isOptional false ] .
+
+ex:BeltFaultAnalysis_Object ex:bindAction ex:QueryFaultDetails .
+
+ex:QueryFaultVideos a ex:Action ;
+  rdfs:label "查询故障位置视频"@zh ;
+  rdfs:comment """查询故障位置视频
+
+@action_label QueryFaultVideos
+@action_description 提供故障位置的视频链接，如无法获取则提供皮带沿线摄像头视频
+
+Args:
+    equipmentName (xsd:string): 设备名称
+    faultLocation (xsd:string): 故障位置
+
+Returns:
+    list: 视频链接列表
+
+Side effects:
+    无
+"""@zh  .
+
+ex:BeltFaultAnalysis_Object ex:bindAction ex:QueryFaultVideos .
+
+ex:QueryMaintenanceRecords a ex:Action ;
+  rdfs:label "查询保养记录"@zh ;
+  rdfs:comment """查询保养记录
+
+@action_label QueryMaintenanceRecords
+@function_description 查询指定设备的保养记录
+
+Args:
+    equipmentName (xsd:string): 设备名称
+    timeRange (xsd:string): 时间范围（如"近3天"、"近1次"）
+    keyword (xsd:string): 关键词筛选（如"%滚筒%"、"%皮带%"）
+
+Returns:
+    list: 保养记录列表，包含型号、预计保养、周期、是否超期、上次保养
+
+Side effects:
+    无
+"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "keyword" ; ex:paramType """{'type': "{'type': 'string', 'is_required': False}", 'is_required': True}""" ; ex:isOptional false ] .
+
+ex:BeltFaultAnalysis_Object ex:bindAction ex:QueryMaintenanceRecords .
+
+ex:QueryReducerVibration a ex:Action ;
+  rdfs:label "查询减速机震动值"@zh ;
+  rdfs:comment """查询减速机震动值
+
+@action_label QueryReducerVibration
+@function_description 查询减速机震动值是否异常
+
+Args:
+    equipmentName (xsd:string): 设备名称
+    faultTime (xsd:dateTime): 故障时间
+
+Returns:
+    dict: 包含速度和加速度的告警信息
+
+Side effects:
+    无
+"""@zh  .
+
+ex:BeltFaultAnalysis_Object ex:bindAction ex:QueryReducerVibration .
+
+ex:QueryRepairRecords a ex:Action ;
+  rdfs:label "查询维修记录"@zh ;
+  rdfs:comment """查询维修记录
+
+@action_label QueryRepairRecords
+@function_description 查询指定设备的维修记录
+
+Args:
+    equipmentName (xsd:string): 设备名称
+    timeRange (xsd:string): 时间范围（如"近3天"、"近1次"）
+    keyword (xsd:string): 关键词筛选（如"%滚筒%"、"%耦合器%"）
+
+Returns:
+    list: 包含设备编号名称、维修内容、作业票状态、实际维修内容、计划开始时间、计划结束时间、维修人员、维修负责人、维修总结
+
+Side effects:
+    无
+"""@zh ;
+  ex:hasParameter [ a ex:Parameter ; ex:paramName "keyword" ; ex:paramType """{'type': "{'type': 'string', 'is_required': False}", 'is_required': True}""" ; ex:isOptional false ] .
+
+ex:BeltFaultAnalysis_Object ex:bindAction ex:QueryRepairRecords .
+
+##################################
+# 对象定义(必须继承ex:Object)
+##################################
+ex:BeltFault a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "皮带机故障"@zh ;
+  rdfs:label "BeltFault"@en ;
+  ex:hasPrimaryKey ex:BeltFault_id ;
+  rdfs:comment "皮带机故障的基类，包含跑偏和打滑等具体故障类型"@zh .
+
+ex:BeltFaultAnalysis_Object a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "皮带机故障分析对象"@zh ;
+  rdfs:label "BeltFaultAnalysis_Object"@en ;
+  ex:hasPrimaryKey ex:BeltFaultAnalysis_Object_id ;
+  rdfs:comment "皮带机故障AI分析的核心对象，包含跑偏故障和打滑故障分析"@zh .
+
+ex:BeltMisalignmentFault a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "皮带机跑偏故障"@zh ;
+  rdfs:label "BeltMisalignmentFault"@en ;
+  ex:hasPrimaryKey ex:BeltMisalignmentFault_id ;
+  rdfs:comment "皮带机跑偏故障的具体类型"@zh .
+
+ex:BeltScaleData a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "皮带秤数据"@zh ;
+  rdfs:label "BeltScaleData"@en ;
+  ex:hasPrimaryKey ex:BeltScaleData_id ;
+  rdfs:comment "皮带秤的重量和速度数据"@zh .
+
+ex:BeltSlippageFault a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "皮带机打滑故障"@zh ;
+  rdfs:label "BeltSlippageFault"@en ;
+  ex:hasPrimaryKey ex:BeltSlippageFault_id ;
+  rdfs:comment "皮带机打滑故障的具体类型"@zh .
+
+ex:CoalType a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "煤种"@zh ;
+  rdfs:label "CoalType"@en ;
+  ex:hasPrimaryKey ex:CoalType_code ;
+  rdfs:comment "煤种信息，用于判断是否易粘连"@zh .
+
+ex:Coupler a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "液力偶合器"@zh ;
+  rdfs:label "Coupler"@en ;
+  ex:hasPrimaryKey ex:Coupler_name ;
+  rdfs:comment "液力偶合器，用于动力传递"@zh .
+
+ex:Equipment a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "设备"@zh ;
+  rdfs:label "Equipment"@en ;
+  ex:hasPrimaryKey ex:Equipment_name ;
+  rdfs:comment "皮带机及相关设备"@zh .
+
+ex:FaultSwitch a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "故障开关"@zh ;
+  rdfs:label "FaultSwitch"@en ;
+  ex:hasPrimaryKey ex:FaultSwitch_code ;
+  rdfs:comment "跑偏开关和打滑开关等故障检测开关"@zh .
+
+ex:MaintenanceRecord a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "保养记录"@zh ;
+  rdfs:label "MaintenanceRecord"@en ;
+  ex:hasPrimaryKey ex:MaintenanceRecord_fid ;
+  rdfs:comment "设备的润滑保养记录"@zh .
+
+ex:Motor a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "电机"@zh ;
+  rdfs:label "Motor"@en ;
+  ex:hasPrimaryKey ex:Motor_sid ;
+  rdfs:comment "驱动电机，用于分析电流平衡性"@zh .
+
+ex:Reducer a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "减速机"@zh ;
+  rdfs:label "Reducer"@en ;
+  ex:hasPrimaryKey ex:Reducer_name ;
+  rdfs:comment "减速机，用于降低转速增加扭矩"@zh .
+
+ex:RepairRecord a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "维修记录"@zh ;
+  rdfs:label "RepairRecord"@en ;
+  ex:hasPrimaryKey ex:RepairRecord_fid ;
+  rdfs:comment "设备的维修工单记录"@zh .
+
+ex:Roller a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "滚筒"@zh ;
+  rdfs:label "Roller"@en ;
+  ex:hasPrimaryKey ex:Roller_name ;
+  rdfs:comment "皮带机滚筒，包括驱动滚筒和改向滚筒"@zh .
+
+ex:Video a owl:Class ;
+  rdfs:subClassOf ex:Object ;
+  rdfs:label "视频"@zh ;
+  rdfs:label "Video"@en ;
+  ex:hasPrimaryKey ex:Video_code ;
+  rdfs:comment "故障位置相关的视频资源"@zh .
+
+##################################
+# 数据属性定义
+# 每个对象的属性里，只能拥有一个primarykey
+# IRI命名规则：ex:{ObjectType}_{AttributeName}
+# AttributeName优先使用英文名(attribute_name)，如无则使用中文名(attribute_label)
+# 这样可以支持不同对象拥有同名但描述不同的属性
+##################################
+ex:Roller_type a owl:DatatypeProperty ;
+  rdfs:domain ex:Roller ;
+  rdfs:range xsd:None ;
+  rdfs:comment "滚筒类型（驱动滚筒、改向滚筒等）"@zh ;
+  rdfs:label "滚筒类型"@zh ;
+  rdfs:label "type"@en .
+
+ex:RepairRecord_supervisor a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "维修负责人"@zh ;
+  rdfs:label "维修负责人"@zh ;
+  rdfs:label "supervisor"@en .
+
+ex:RepairRecord_ticket_fid a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票FID"@zh ;
+  rdfs:label "作业票ID"@zh ;
+  rdfs:label "ticket_fid"@en .
+
+ex:RepairRecord_planned_end_time a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票计划结束时间"@zh ;
+  rdfs:label "计划结束时间"@zh ;
+  rdfs:label "planned_end_time"@en .
+
+ex:RepairRecord_fid a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "工单FID"@zh ;
+  rdfs:label "工单ID"@zh ;
+  rdfs:label "fid"@en .
+
+ex:RepairRecord_technical_requirements a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "技术要求"@zh ;
+  rdfs:label "技术要求"@zh ;
+  rdfs:label "technical_requirements"@en .
+
+ex:RepairRecord_ticket_no a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票编号（实际维修编号）"@zh ;
+  rdfs:label "作业票编号"@zh ;
+  rdfs:label "ticket_no"@en .
+
+ex:RepairRecord_summary a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "维修总结"@zh ;
+  rdfs:label "维修总结"@zh ;
+  rdfs:label "summary"@en .
+
+ex:RepairRecord_start_time a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "工单开工时间(MM-dd HH24:MI)"@zh ;
+  rdfs:label "开工时间"@zh ;
+  rdfs:label "start_time"@en .
+
+ex:RepairRecord_status a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票状态(0 待处理 1 未完成 2 已完成)"@zh ;
+  rdfs:label "作业票状态"@zh ;
+  rdfs:label "status"@en .
+
+ex:Roller_name a owl:DatatypeProperty ;
+  rdfs:domain ex:Roller ;
+  rdfs:range xsd:None ;
+  rdfs:comment "滚筒名称"@zh ;
+  rdfs:label "滚筒名称"@zh ;
+  rdfs:label "name"@en .
+
+ex:RepairRecord_add_date a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票添加时间"@zh ;
+  rdfs:label "添加时间"@zh ;
+  rdfs:label "add_date"@en .
+
+ex:BeltMisalignmentFault_id a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltMisalignmentFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "跑偏故障ID"@zh ;
+  rdfs:label "跑偏故障ID"@zh ;
+  rdfs:label "id"@en .
+
+ex:BeltScaleData_save_time a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "保存时间"@zh ;
+  rdfs:label "保存时间"@zh ;
+  rdfs:label "save_time"@en .
+
+ex:BeltScaleData_flow_rate a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "瞬时流量"@zh ;
+  rdfs:label "瞬时流量"@zh ;
+  rdfs:label "flow_rate"@en .
+
+ex:BeltScaleData_belt_speed a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "皮带速度"@zh ;
+  rdfs:label "皮带速度"@zh ;
+  rdfs:label "belt_speed"@en .
+
+ex:BeltScaleData_flow_status a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "流量状态"@zh ;
+  rdfs:label "流量状态"@zh ;
+  rdfs:label "flow_status"@en .
+
+ex:BeltScaleData_reset_total a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "重设累计"@zh ;
+  rdfs:label "重设累计"@zh ;
+  rdfs:label "reset_total"@en .
+
+ex:BeltScaleData_sort_no a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "排序号"@zh ;
+  rdfs:label "排序号"@zh ;
+  rdfs:label "sort_no"@en .
+
+ex:BeltScaleData_total a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "主累计值"@zh ;
+  rdfs:label "主累计值"@zh ;
+  rdfs:label "total"@en .
+
+ex:BeltScaleData_name a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "皮带秤名"@zh ;
+  rdfs:label "皮带秤名"@zh ;
+  rdfs:label "name"@en .
+
+ex:BeltScaleData_id a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range xsd:None ;
+  rdfs:comment "皮带秤数据ID"@zh ;
+  rdfs:label "数据ID"@zh ;
+  rdfs:label "id"@en .
+
+ex:RepairRecord_content a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "工单表维修内容"@zh ;
+  rdfs:label "维修内容"@zh ;
+  rdfs:label "content"@en .
+
+ex:BeltFaultAnalysis_Object_id a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFaultAnalysis_Object ;
+  rdfs:range xsd:None ;
+  rdfs:comment "皮带机故障分析对象ID"@zh ;
+  rdfs:label "分析对象ID"@zh ;
+  rdfs:label "id"@en .
+
+ex:RepairRecord_safety_level a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "防止设备启动措施等级"@zh ;
+  rdfs:label "安全等级"@zh ;
+  rdfs:label "safety_level"@en .
+
+ex:RepairRecord_workers a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "维修人员"@zh ;
+  rdfs:label "维修人员"@zh ;
+  rdfs:label "workers"@en .
+
+ex:RepairRecord_equipment_code a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备代码"@zh ;
+  rdfs:label "设备代码"@zh ;
+  rdfs:label "equipment_code"@en .
+
+ex:RepairRecord_planned_stop_time a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "计划停机时间(HH24:MI-HH24:MI)"@zh ;
+  rdfs:label "计划停机时间"@zh ;
+  rdfs:label "planned_stop_time"@en .
+
+ex:RepairRecord_safety_scope a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "防止设备启动范围"@zh ;
+  rdfs:label "安全范围"@zh ;
+  rdfs:label "safety_scope"@en .
+
+ex:RepairRecord_end_time a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "工单完工时间(MM-dd HH24:MI)"@zh ;
+  rdfs:label "完工时间"@zh ;
+  rdfs:label "end_time"@en .
+
+ex:RepairRecord_safety_tips a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "特别安全提示"@zh ;
+  rdfs:label "安全提示"@zh ;
+  rdfs:label "safety_tips"@en .
+
+ex:RepairRecord_planned_start_time a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票计划开始时间"@zh ;
+  rdfs:label "计划开始时间"@zh ;
+  rdfs:label "planned_start_time"@en .
+
+ex:RepairRecord_execution_date a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "任务单执行日期"@zh ;
+  rdfs:label "执行日期"@zh ;
+  rdfs:label "execution_date"@en .
+
+ex:Reducer_save_date a owl:DatatypeProperty ;
+  rdfs:domain ex:Reducer ;
+  rdfs:range xsd:None ;
+  rdfs:comment "采集时间"@zh ;
+  rdfs:label "采集时间"@zh ;
+  rdfs:label "save_date"@en .
+
+ex:RepairRecord_equipment_stop a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "工单表是否停机"@zh ;
+  rdfs:label "是否停机"@zh ;
+  rdfs:label "equipment_stop"@en .
+
+ex:RepairRecord_task_no a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "任务单编号"@zh ;
+  rdfs:label "任务单编号"@zh ;
+  rdfs:label "task_no"@en .
+
+ex:RepairRecord_planned_execution_date a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "任务单预计执行时间(yyyy-MM-dd)"@zh ;
+  rdfs:label "预计执行时间"@zh ;
+  rdfs:label "planned_execution_date"@en .
+
+ex:RepairRecord_ticket_stop a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票是否停机"@zh ;
+  rdfs:label "作业票是否停机"@zh ;
+  rdfs:label "ticket_stop"@en .
+
+ex:RepairRecord_work_order_no a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "工单编号"@zh ;
+  rdfs:label "工单编号"@zh ;
+  rdfs:label "work_order_no"@en .
+
+ex:RepairRecord_equipment_id a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备ID"@zh ;
+  rdfs:label "设备ID"@zh ;
+  rdfs:label "equipment_id"@en .
+
+ex:RepairRecord_actual_content a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "作业票实际维修内容"@zh ;
+  rdfs:label "实际维修内容"@zh ;
+  rdfs:label "actual_content"@en .
+
+ex:RepairRecord_equipment_name a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备编号名称"@zh ;
+  rdfs:label "设备名称"@zh ;
+  rdfs:label "equipment_name"@en .
+
+ex:RepairRecord_plan_changed a owl:DatatypeProperty ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "计划是否变更"@zh ;
+  rdfs:label "计划变更"@zh ;
+  rdfs:label "plan_changed"@en .
+
+ex:BeltSlippageFault_id a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltSlippageFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "打滑故障ID"@zh ;
+  rdfs:label "打滑故障ID"@zh ;
+  rdfs:label "id"@en .
+
+ex:Equipment_name a owl:DatatypeProperty ;
+  rdfs:domain ex:Equipment ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备名称"@zh ;
+  rdfs:label "设备名称"@zh ;
+  rdfs:label "name"@en .
+
+ex:CoalType_is_sticky a owl:DatatypeProperty ;
+  rdfs:domain ex:CoalType ;
+  rdfs:range xsd:None ;
+  rdfs:comment "是否易粘连"@zh ;
+  rdfs:label "是否易粘连"@zh ;
+  rdfs:label "is_sticky"@en .
+
+ex:CoalType_code a owl:DatatypeProperty ;
+  rdfs:domain ex:CoalType ;
+  rdfs:range xsd:None ;
+  rdfs:comment "煤种编号"@zh ;
+  rdfs:label "煤种编号"@zh ;
+  rdfs:label "code"@en .
+
+ex:CoalType_name a owl:DatatypeProperty ;
+  rdfs:domain ex:CoalType ;
+  rdfs:range xsd:None ;
+  rdfs:comment "煤种名称"@zh ;
+  rdfs:label "煤种名称"@zh ;
+  rdfs:label "name"@en .
+
+ex:Video_code a owl:DatatypeProperty ;
+  rdfs:domain ex:Video ;
+  rdfs:range xsd:None ;
+  rdfs:comment "摄像头code码"@zh ;
+  rdfs:label "视频代码"@zh ;
+  rdfs:label "code"@en .
+
+ex:Video_address a owl:DatatypeProperty ;
+  rdfs:domain ex:Video ;
+  rdfs:range xsd:None ;
+  rdfs:comment "视频地址"@zh ;
+  rdfs:label "视频地址"@zh ;
+  rdfs:label "address"@en .
+
+ex:FaultSwitch_location a owl:DatatypeProperty ;
+  rdfs:domain ex:FaultSwitch ;
+  rdfs:range xsd:None ;
+  rdfs:comment "开关位置（尾部、中间等）"@zh ;
+  rdfs:label "开关位置"@zh ;
+  rdfs:label "location"@en .
+
+ex:FaultSwitch_number a owl:DatatypeProperty ;
+  rdfs:domain ex:FaultSwitch ;
+  rdfs:range xsd:None ;
+  rdfs:comment "开关编号"@zh ;
+  rdfs:label "开关编号"@zh ;
+  rdfs:label "number"@en .
+
+ex:FaultSwitch_code a owl:DatatypeProperty ;
+  rdfs:domain ex:FaultSwitch ;
+  rdfs:range xsd:None ;
+  rdfs:comment "故障开关代码"@zh ;
+  rdfs:label "开关代码"@zh ;
+  rdfs:label "code"@en .
+
+ex:FaultSwitch_type a owl:DatatypeProperty ;
+  rdfs:domain ex:FaultSwitch ;
+  rdfs:range xsd:None ;
+  rdfs:comment "开关类型（跑偏开关、打滑开关）"@zh ;
+  rdfs:label "开关类型"@zh ;
+  rdfs:label "type"@en .
+
+ex:Equipment_code a owl:DatatypeProperty ;
+  rdfs:domain ex:Equipment ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备代码"@zh ;
+  rdfs:label "设备代码"@zh ;
+  rdfs:label "code"@en .
+
+ex:Coupler_name a owl:DatatypeProperty ;
+  rdfs:domain ex:Coupler ;
+  rdfs:range xsd:None ;
+  rdfs:comment "液力偶合器名称"@zh ;
+  rdfs:label "偶合器名称"@zh ;
+  rdfs:label "name"@en .
+
+ex:BeltFault_id a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "故障主键ID"@zh ;
+  rdfs:label "故障ID"@zh ;
+  rdfs:label "id"@en .
+
+ex:BeltFault_notes a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "转接塔名称"@zh ;
+  rdfs:label "转接塔名称"@zh ;
+  rdfs:label "notes"@en .
+
+ex:BeltFault_code a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "数据采集标签"@zh ;
+  rdfs:label "采集标签"@zh ;
+  rdfs:label "code"@en .
+
+ex:BeltFault_status a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "状态(0:未处理 1:已处理)"@zh ;
+  rdfs:label "处理状态"@zh ;
+  rdfs:label "status"@en .
+
+ex:BeltFault_data_id a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "数据采集ID"@zh ;
+  rdfs:label "采集ID"@zh ;
+  rdfs:label "data_id"@en .
+
+ex:BeltFault_equipment_name a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备名称"@zh ;
+  rdfs:label "设备名称"@zh ;
+  rdfs:label "equipment_name"@en .
+
+ex:BeltFault_start_date a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "故障时间"@zh ;
+  rdfs:label "故障时间"@zh ;
+  rdfs:label "start_date"@en .
+
+ex:BeltFault_reason a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "故障内容描述"@zh ;
+  rdfs:label "故障内容描述"@zh ;
+  rdfs:label "reason"@en .
+
+ex:BeltFault_name a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "数据采集标签描述"@zh ;
+  rdfs:label "标签描述"@zh ;
+  rdfs:label "name"@en .
+
+ex:Motor_equipment_code a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备编码"@zh ;
+  rdfs:label "设备编码"@zh ;
+  rdfs:label "equipment_code"@en .
+
+ex:Reducer_name a owl:DatatypeProperty ;
+  rdfs:domain ex:Reducer ;
+  rdfs:range xsd:None ;
+  rdfs:comment "减速机名称"@zh ;
+  rdfs:label "减速机名称"@zh ;
+  rdfs:label "name"@en .
+
+ex:Reducer_vibration_type a owl:DatatypeProperty ;
+  rdfs:domain ex:Reducer ;
+  rdfs:range xsd:None ;
+  rdfs:comment "类型（温度、速度、加速度）"@zh ;
+  rdfs:label "震动类型"@zh ;
+  rdfs:label "vibration_type"@en .
+
+ex:Reducer_vibration_value a owl:DatatypeProperty ;
+  rdfs:domain ex:Reducer ;
+  rdfs:range xsd:None ;
+  rdfs:comment "震动数值"@zh ;
+  rdfs:label "震动值"@zh ;
+  rdfs:label "vibration_value"@en .
+
+ex:Reducer_alarm_info a owl:DatatypeProperty ;
+  rdfs:domain ex:Reducer ;
+  rdfs:range xsd:None ;
+  rdfs:comment "告警信息"@zh ;
+  rdfs:label "告警信息"@zh ;
+  rdfs:label "alarm_info"@en .
+
+ex:Motor_current_c a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "C相电流"@zh ;
+  rdfs:label "C相电流"@zh ;
+  rdfs:label "current_c"@en .
+
+ex:Motor_code a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "电机编码"@zh ;
+  rdfs:label "电机编码"@zh ;
+  rdfs:label "code"@en .
+
+ex:Motor_equipment a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "设备名称"@zh ;
+  rdfs:label "设备名称"@zh ;
+  rdfs:label "equipment"@en .
+
+ex:Motor_current_b a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "B相电流"@zh ;
+  rdfs:label "B相电流"@zh ;
+  rdfs:label "current_b"@en .
+
+ex:Motor_sid a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "电机SID"@zh ;
+  rdfs:label "电机SID"@zh ;
+  rdfs:label "sid"@en .
+
+ex:Motor_save_date a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "保存时间"@zh ;
+  rdfs:label "保存时间"@zh ;
+  rdfs:label "save_date"@en .
+
+ex:BeltFault_type a owl:DatatypeProperty ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range xsd:None ;
+  rdfs:comment "故障类型（1:故障 2：报警 5:转接塔故障）"@zh ;
+  rdfs:label "故障类型"@zh ;
+  rdfs:label "type"@en .
+
+ex:Motor_user a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "用户/电机名称"@zh ;
+  rdfs:label "电机名称"@zh ;
+  rdfs:label "user"@en .
+
+ex:Motor_current_a a owl:DatatypeProperty ;
+  rdfs:domain ex:Motor ;
+  rdfs:range xsd:None ;
+  rdfs:comment "A相电流"@zh ;
+  rdfs:label "A相电流"@zh ;
+  rdfs:label "current_a"@en .
+
+ex:MaintenanceRecord_cycle a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "保养周期（月）"@zh ;
+  rdfs:label "周期"@zh ;
+  rdfs:label "cycle"@en .
+
+ex:MaintenanceRecord_overdue a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "是否超期(0:否 1:是)"@zh ;
+  rdfs:label "是否超期"@zh ;
+  rdfs:label "overdue"@en .
+
+ex:MaintenanceRecord_last_date a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "上次保养时间"@zh ;
+  rdfs:label "上次保养"@zh ;
+  rdfs:label "last_date"@en .
+
+ex:MaintenanceRecord_model a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "型号"@zh ;
+  rdfs:label "型号"@zh ;
+  rdfs:label "model"@en .
+
+ex:MaintenanceRecord_name a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "保养名称"@zh ;
+  rdfs:label "保养名称"@zh ;
+  rdfs:label "name"@en .
+
+ex:MaintenanceRecord_fid a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "保养记录主键"@zh ;
+  rdfs:label "保养记录ID"@zh ;
+  rdfs:label "fid"@en .
+
+ex:MaintenanceRecord_next_date a owl:DatatypeProperty ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range xsd:None ;
+  rdfs:comment "预计保养时间"@zh ;
+  rdfs:label "预计保养"@zh ;
+  rdfs:label "next_date"@en .
+
+##################################
+# 关系定义
+# 必须继承ex:custom_relation
+# 有正向关系就需定义一个反向关系
+# IRI命名规则：ex:{domain}_{relationLabel}_{range}
+# 这样可以支持多组对象对使用相同的关系标签
+##################################
+ex:Equipment_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:Equipment ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasEquipment_Equipment a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:Equipment ;
+  rdfs:label "故障关联设备"@zh ;
+  ex:relationLabel "hasEquipment"@zh ;
+  rdfs:comment "皮带机故障与发生故障的设备之间的关系"@zh .
+
+ex:BeltFault_hasFaultSwitch_FaultSwitch a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:FaultSwitch ;
+  rdfs:label "故障关联故障开关"@zh ;
+  ex:relationLabel "hasFaultSwitch"@zh ;
+  rdfs:comment "皮带机故障与相关故障开关的关联关系"@zh .
+
+ex:FaultSwitch_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:FaultSwitch ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasMaintenanceRecord_MaintenanceRecord a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:MaintenanceRecord ;
+  rdfs:label "故障关联保养记录"@zh ;
+  ex:relationLabel "hasMaintenanceRecord"@zh ;
+  rdfs:comment "故障与相关保养记录之间的关系"@zh .
+
+ex:MaintenanceRecord_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:MaintenanceRecord ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasBeltScaleData_BeltScaleData a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:BeltScaleData ;
+  rdfs:label "故障关联皮带秤数据"@zh ;
+  ex:relationLabel "hasBeltScaleData"@zh ;
+  rdfs:comment "皮带机故障关联相关的皮带秤数据"@zh .
+
+ex:BeltScaleData_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltScaleData ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasCoalType_CoalType a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:CoalType ;
+  rdfs:label "故障关联煤种信息"@zh ;
+  ex:relationLabel "hasCoalType"@zh ;
+  rdfs:comment "故障与相关煤种信息之间的关系，用于判断是否湿黏煤"@zh .
+
+ex:CoalType_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:CoalType ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasCoupler_Coupler a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:Coupler ;
+  rdfs:label "皮带机关联液力偶合器"@zh ;
+  ex:relationLabel "hasCoupler"@zh ;
+  rdfs:comment "皮带机设备关联其液力偶合器"@zh .
+
+ex:Coupler_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:Coupler ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasMotor_Motor a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:Motor ;
+  rdfs:label "设备关联电机"@zh ;
+  ex:relationLabel "hasMotor"@zh ;
+  rdfs:comment "设备关联的驱动电机"@zh .
+
+ex:Motor_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:Motor ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasReducer_Reducer a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:Reducer ;
+  rdfs:label "故障关联减速机"@zh ;
+  ex:relationLabel "hasReducer"@zh ;
+  rdfs:comment "故障与相关减速机之间的关系"@zh .
+
+ex:Reducer_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:Reducer ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasRepairRecord_RepairRecord a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:RepairRecord ;
+  rdfs:label "故障关联维修记录"@zh ;
+  ex:relationLabel "hasRepairRecord"@zh ;
+  rdfs:comment "故障与相关维修记录之间的关系"@zh .
+
+ex:RepairRecord_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:RepairRecord ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasRoller_Roller a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:Roller ;
+  rdfs:label "皮带机关联滚筒"@zh ;
+  ex:relationLabel "hasRoller"@zh ;
+  rdfs:comment "皮带机设备关联其滚筒"@zh .
+
+ex:Roller_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:Roller ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
+
+ex:BeltFault_hasVideo_Video a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:BeltFault ;
+  rdfs:range ex:Video ;
+  rdfs:label "故障关联视频资源"@zh ;
+  ex:relationLabel "hasVideo"@zh ;
+  rdfs:comment "皮带机故障关联相关的视频资源"@zh .
+
+ex:Video_hasBeltFault_BeltFault a owl:ObjectProperty ;
+  rdfs:subPropertyOf ex:custom_relation ;
+  rdfs:domain ex:Video ;
+  rdfs:range ex:BeltFault ;
+  rdfs:label "皮带机关联故障"@zh ;
+  ex:relationLabel "hasBeltFault"@zh ;
+  rdfs:comment "皮带机设备关联到其发生的故障"@zh .
